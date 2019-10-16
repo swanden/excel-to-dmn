@@ -1,0 +1,8 @@
+node_modules
+data.xlsx
+data2.xlsx
+age-experience.xlsx
+package-lock.xlsx
+/~$data.xlsx
+/~$data2.xlsx
+.idea
