@@ -1,13 +1,35 @@
 const express = require('express');
 const excelParserFactory = require('./lib/excelparser');
-const XMLGeneratorFactory = require('./lib/xmlgenerator');
+const DMNGeneratorFactory = require('./lib/dmngenerator');
 
 const app = express();
 const excelParser = excelParserFactory();
-const xmlGenerator = XMLGeneratorFactory();
+const dmnGenerator = DMNGeneratorFactory();
 
 excelParser.parseSimpleTable('data2.xlsx', ['A', 'B'], ['D'], (table) => {
-    xmlGenerator.generate(table);
+    let variablesMetadata = [
+        {
+            name: 'first',
+            columnName: 'A',
+            type: 'string',
+            directionType: 'input'
+        },
+        {
+            name: 'second',
+            columnName: 'B',
+            type: 'string',
+            directionType: 'input'
+        },
+        {
+            name: 'third',
+            columnName: 'D',
+            type: 'double',
+            directionType: 'output'
+        }
+    ];
+
+    let xml = dmnGenerator.generateXML(table, variablesMetadata);
+    console.log(xml);
 });
 
 // app.get('/', function(req, res){
