@@ -16,53 +16,37 @@
         <div class="form-row">
 
           <div class="col">
-            <h3>Входные параметры <button type="button" class="btn btn-primary">+</button></h3>
-            <div class="card">
-              <div class="card-body">
-                <div class="form-group">
-                  <label for="excel-col-name">Имя Excel столбца</label>
-                  <input type="text" class="form-control" id="excel-col-name" aria-describedby="" placeholder="Введите имя столбца">
-                </div>
-                <div class="form-group">
-                  <label for="variable-name">Имя переменной</label>
-                  <input type="text" class="form-control" id="variable-name" aria-describedby="" placeholder="Введите имя переменной">
-                </div>
-                <div class="form-group">
-                  <label for="variable-type">Тип переменной</label>
-                  <select class="form-control" id="variable-type">
-                    <option>string</option>
-                    <option>int</option>
-                    <option>double</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+            <h3>Входные параметры <button type="button" class="btn btn-secondary"
+              @click="addInputParam"
+            >+</button></h3>
+              <param-data
+                      v-for="(item, index) in inputParams"
+                      :key="item.directionType + index"
+                      @changeParam="changeParam"
+                      @removeInputParam="removeInputParam"
+                      :index="index"
+                      :paramData="item"
+              ></param-data>
           </div>
 
           <div class="col">
-            <h3>Выходные параметры <button type="button" class="btn btn-primary">+</button></h3>
-            <div class="card">
-              <div class="card-body">
-                <div class="form-group">
-                  <label for="excel-col-name">Имя Excel столбца</label>
-                  <input type="text" class="form-control" id="excel-col-name" aria-describedby="" placeholder="Введите имя столбца">
-                </div>
-                <div class="form-group">
-                  <label for="variable-name">Имя переменной</label>
-                  <input type="text" class="form-control" id="variable-name" aria-describedby="" placeholder="Введите имя переменной">
-                </div>
-                <div class="form-group">
-                  <label for="variable-type">Тип переменной</label>
-                  <select class="form-control" id="variable-type">
-                    <option>string</option>
-                    <option>int</option>
-                    <option>double</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+            <h3>Выходные параметры <button type="button" class="btn btn-secondary"
+               @click="addOutputParam"
+            >+</button></h3>
+            <param-data
+                    v-for="(item, index) in outputParams"
+                    :key="item.directionType + index"
+                    @changeParam="changeParam"
+                    @removeOutputParam="removeOutputParam"
+                    :index="index"
+                    :paramData="item"
+            ></param-data>
           </div>
 
+        </div>
+
+        <div class="form-group mt-3">
+          <button type="button" class="btn btn-secondary">Создать</button>
         </div>
 
       </form>
@@ -72,8 +56,64 @@
 </template>
 
 <script>
+import ParamData from './ParamData';
+
 export default {
   name: 'SimpleTableForm',
+  data() {
+    return {
+        inputParams: [
+          {
+            name: '',
+            columnName: 0,
+            type: 'string',
+            directionType: 'input'
+          }
+        ],
+        outputParams: [
+          {
+            name: '',
+            columnName: 0,
+            type: 'string',
+            directionType: 'output'
+          }
+        ]
+    }
+  },
+  components: {
+    ParamData
+  },
+  methods: {
+    addInputParam() {
+      this.inputParams.push({
+        name: '',
+        columnName: 0,
+        type: 'string',
+        directionType: 'input'
+      });
+    },
+    addOutputParam() {
+      this.outputParams.push({
+        name: '',
+        columnName: 0,
+        type: 'string',
+        directionType: 'output'
+      });
+    },
+    removeInputParam(index) {
+      this.$delete(this.inputParams, index);
+    },
+    removeOutputParam(index) {
+      this.$delete(this.outputParams, index);
+    },
+    changeParam(data) {
+      if (data.paramData.directionType === 'input') {
+        this.inputParams[data.index] = data.paramData;
+      } else {
+        this.outputParams[data.index] = data.paramData;
+      }
+    }
+  },
   props: {
     msg: String
   }

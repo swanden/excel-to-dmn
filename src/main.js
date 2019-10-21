@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import {store} from './store';
 
 import App from './App.vue';
 import SimpleTableForm from "./components/SimpleTableForm";
@@ -20,5 +21,6 @@ const router = new VueRouter({
 
 new Vue({
   render: h => h(App),
-  router
+  router,
+  store
 }).$mount('#app');

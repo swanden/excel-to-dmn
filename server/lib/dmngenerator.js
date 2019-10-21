@@ -29,12 +29,12 @@ module.exports = () => {
     const inputEntryTpl = `<inputEntry id="UnaryTests_##id##"><text>##value##</text></inputEntry>\n`;
     const outputEntryTpl = `<outputEntry id="LiteralExpression_##id##"><text>##value##</text></outputEntry>\n`;
 
-    dmnGenerator.generateXML = (table, variablesMetadata, tableName) => {
+    dmnGenerator.generateXML = (table, paramsMetadata, tableName) => {
         let inputVarsDefinition = '';
         let outputVarsDefinition = '';
 
-        for (let i in variablesMetadata) {
-            let variable = variablesMetadata[i];
+        for (let i in paramsMetadata) {
+            let variable = paramsMetadata[i];
 
             if (variable.directionType === 'input') {
                 inputVarsDefinition += inputVariableTpl
@@ -64,8 +64,8 @@ module.exports = () => {
             let inputEntries = '';
             let outputEntries = '';
 
-            for(let varIndex in variablesMetadata) {
-                let variableMetadata = variablesMetadata[varIndex];
+            for(let varIndex in paramsMetadata) {
+                let variableMetadata = paramsMetadata[varIndex];
                 let col = row.filter((val) => val.name === variableMetadata.columnName)[0];
 
                 if (col.directionType === 'input') {

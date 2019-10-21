@@ -7,36 +7,47 @@ const excelParser = excelParserFactory();
 const dmnGenerator = DMNGeneratorFactory();
 
 app.get('/', function(req, res){
+    let output = {
+        result: false
+    };
 
-    excelParser.parseSimpleTable('data2.xlsx', ['A', 'B'], ['D'], (table) => {
-        let variablesMetadata = [
-            {
-                name: 'first',
-                columnName: 'A',
-                type: 'string',
-                directionType: 'input'
-            },
-            {
-                name: 'second',
-                columnName: 'B',
-                type: 'string',
-                directionType: 'input'
-            },
-            {
-                name: 'third',
-                columnName: 'D',
-                type: 'double',
-                directionType: 'output'
-            }
-        ];
+    let paramsMetadata = [
+        {
+            name: 'first',
+            columnName: 'A',
+            type: 'string',
+            directionType: 'input'
+        },
+        {
+            name: 'second',
+            columnName: 'B',
+            type: 'string',
+            directionType: 'input'
+        },
+        {
+            name: 'third',
+            columnName: 'D',
+            type: 'double',
+            directionType: 'output'
+        }
+    ];
 
-        let xml = dmnGenerator.generateXML(table, variablesMetadata, 'Модели');
-        let result = {
-            result: true,
-            xml: xml
-        };
+    excelParser.parseSimpleTable('data2.xlsx', paramsMetadata, (err, table) => {
+        // if (err) {
+        //     let msg = 'Error: ' + err.message;
+        //     console.log(msg);
+        //     output.error = msg;
+        //
+        //     return res.json(output);
+        // }
 
-        res.json(result);
+        let xml = dmnGenerator.generateXML(table, paramsMetadata, 'Модели');
+
+        output.result = true;
+        output.xml = xml;
+        res.setHeader('Access-Control-Allow-Origin', '*');
+        res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
+        res.json(output);
     });
 });
 

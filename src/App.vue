@@ -25,17 +25,48 @@
                     <router-view></router-view>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h1>User ID: {{ getUserID() }}</h1>
+                    <div class="form-group">
+                        <label for="exampleFormControlTextarea1">Result</label>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" v-model="xml"></textarea>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
     // import SimpleTableForm from "./components/SimpleTableForm";
+    import axios from 'axios';
+    import {mapActions, mapGetters} from 'vuex';
 
     export default {
         name: 'app',
-        components: {
-            // SimpleTableForm
+        data() {
+            return {
+                xml: null
+            }
+        },
+        methods: {
+            ...mapActions(
+                'tables',
+                {setUserID: 'setUserID'}
+            ),
+            ...mapGetters(
+                'tables',
+                {getUserID: 'getUserID'}
+            ),
+        },
+        mounted() {
+            axios
+                .get('http://localhost:3000/')
+                .then((response) => {
+                    this.xml = response.data.xml;
+                    // console.log(this.xml)
+                });
         }
     }
 </script>
