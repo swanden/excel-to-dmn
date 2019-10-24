@@ -7,6 +7,7 @@
                     <select class="form-control" id="excel-col-name"
                             v-model="paramData.columnName"
                             @change="changeParam"
+                            :class="isValidForm === false && paramData.columnName == 0 ? 'is-invalid' : ''"
                     >
                         <option value="0"></option>
                         <option
@@ -14,33 +15,6 @@
                                 :value="columnName"
                                 :key="columnName"
                         >{{ columnName }}</option>
-<!--                        <option value="0"></option>-->
-<!--                        <option value="A">A</option>-->
-<!--                        <option value="B">B</option>-->
-<!--                        <option value="C">C</option>-->
-<!--                        <option value="D">D</option>-->
-<!--                        <option value="E">E</option>-->
-<!--                        <option value="F">F</option>-->
-<!--                        <option value="G">G</option>-->
-<!--                        <option value="H">H</option>-->
-<!--                        <option value="I">I</option>-->
-<!--                        <option value="J">J</option>-->
-<!--                        <option value="K">K</option>-->
-<!--                        <option value="L">L</option>-->
-<!--                        <option value="M">M</option>-->
-<!--                        <option value="N">N</option>-->
-<!--                        <option value="O">O</option>-->
-<!--                        <option value="P">P</option>-->
-<!--                        <option value="Q">Q</option>-->
-<!--                        <option value="R">R</option>-->
-<!--                        <option value="S">S</option>-->
-<!--                        <option value="T">T</option>-->
-<!--                        <option value="U">U</option>-->
-<!--                        <option value="V">V</option>-->
-<!--                        <option value="W">W</option>-->
-<!--                        <option value="X">X</option>-->
-<!--                        <option value="Y">Y</option>-->
-<!--                        <option value="Z">Z</option>-->
                     </select>
                 </div>
                 <div class="form-group">
@@ -48,6 +22,7 @@
                     <input type="text" class="form-control" id="variable-name" aria-describedby="" placeholder="Введите имя переменной"
                            @input="changeParam"
                            v-model="paramData.name"
+                           :class="isValidForm === false && paramData.name.trim() == '' ? 'is-invalid' : ''"
                     >
                 </div>
                 <div class="form-group">
@@ -62,7 +37,7 @@
                     </select>
                 </div>
                 <div class="form-group text-right">
-                    <button type="button" class="btn btn-secondary" @click="remove">Удалить</button>
+                    <button type="button" class="btn btn-secondary" @click="remove" :disabled="index === 0">Удалить</button>
                 </div>
             </div>
         </div>
@@ -76,7 +51,8 @@
             'index',
             'paramData',
             "columnNames",
-            "takenColumnNames"
+            "takenColumnNames",
+            "isValidForm"
         ],
         data() {
            return {
@@ -85,7 +61,6 @@
         computed: {
             paramColumnNames() {
                 if (this.paramData.columnName !== 0) {
-                    // let difference = this.columnNames.filter(item => !this.takenColumnNames.includes(item)) ;
                     let takenColumnNames = this.takenColumnNames.filter(item => item !== this.paramData.columnName);
 
                     return this.columnNames.filter(item => !takenColumnNames.includes(item));
@@ -103,6 +78,9 @@
                 }
             },
             changeParam() {
+                // console.log((!this.isValidForm && this.paramData.columnName == 0))
+                // console.log('isValid', this.isValidForm)
+                // console.log('columnName', this.paramData.columnName)
                 this.$emit('changeParam', {
                     paramData: this.paramData,
                     index: this.index

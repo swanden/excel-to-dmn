@@ -1,4 +1,7 @@
 const express = require('express');
+const formidable = require('formidable');
+const fs = require('fs');
+
 const excelParserFactory = require('./lib/excelparser');
 const DMNGeneratorFactory = require('./lib/dmngenerator');
 
@@ -6,42 +9,73 @@ const app = express();
 const excelParser = excelParserFactory();
 const dmnGenerator = DMNGeneratorFactory();
 
-app.get('/', function(req, res){
-    let output = {
-        result: false
-    };
+let output = {
+    result: false
+};
 
-    let paramsMetadata = [
-        {
-            name: 'first',
-            columnName: 'A',
-            type: 'string',
-            directionType: 'input'
-        },
-        {
-            name: 'second',
-            columnName: 'B',
-            type: 'string',
-            directionType: 'input'
-        },
-        {
-            name: 'third',
-            columnName: 'D',
-            type: 'double',
-            directionType: 'output'
+app.post('/', function(req, res) {
+    let form = new formidable.IncomingForm();
+    form.parse(req, function (err, fields, files) {
+        if (err) {
+            output.error = err.message;
+            return res.json(output);
         }
-    ];
 
-    excelParser.parseSimpleTable('data2.xlsx', paramsMetadata, (err, table) => {
-        // if (err) {
-        //     let msg = 'Error: ' + err.message;
-        //     console.log(msg);
-        //     output.error = msg;
-        //
-        //     return res.json(output);
-        // }
+        let oldPath = files.file.path;
+        let serverFileName = `${(new Date().getTime())}_${files.file.name}`;
+        let newPath = `${__dirname}/tmp/${serverFileName}`;
 
-        let xml = dmnGenerator.generateXML(table, paramsMetadata, 'Модели');
+        uploadFile(oldPath, newPath, fields, res);
+    });
+});
+
+function uploadFile(oldPath, newPath, fields, res) {
+    fs.rename(oldPath, newPath, (err) => {
+        if (err) {
+            output.error = err.message;
+            return res.json(output);
+        }
+
+        let paramsMetadata = JSON.parse(fields.paramsMetadata);
+        let tableName = fields.dmnTableName;
+        // let paramsMetadata = [
+        //     {
+        //         name: 'first',
+        //         columnName: 'A',
+        //         type: 'string',
+        //         directionType: 'input'
+        //     },
+        //     {
+        //         name: 'second',
+        //         columnName: 'B',
+        //         type: 'string',
+        //         directionType: 'input'
+        //     },
+        //     {
+        //         name: 'third',
+        //         columnName: 'D',
+        //         type: 'double',
+        //         directionType: 'output'
+        //     }
+        // ];
+
+        parseTable(newPath, paramsMetadata, tableName, res);
+    });
+};
+
+function parseTable(newPath, paramsMetadata, tableName, res) {
+    excelParser.parseSimpleTable(newPath, paramsMetadata, (err, table) => {
+        fs.unlinkSync(newPath);
+
+        if (err) {
+            let msg = 'Error: ' + err.message;
+            console.log(msg);
+            output.error = msg;
+
+            return res.json(output);
+        }
+
+        let xml = dmnGenerator.generateXML(table, paramsMetadata, tableName);
 
         output.result = true;
         output.xml = xml;
@@ -49,7 +83,48 @@ app.get('/', function(req, res){
         res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
         res.json(output);
     });
-});
+};
+
+// app.get('/', function(req, res){
+//     let paramsMetadata = [
+//         {
+//             name: 'first',
+//             columnName: 'A',
+//             type: 'string',
+//             directionType: 'input'
+//         },
+//         {
+//             name: 'second',
+//             columnName: 'B',
+//             type: 'string',
+//             directionType: 'input'
+//         },
+//         {
+//             name: 'third',
+//             columnName: 'D',
+//             type: 'double',
+//             directionType: 'output'
+//         }
+//     ];
+//
+//     excelParser.parseSimpleTable('data2.tmp', paramsMetadata, (err, table) => {
+//         // if (err) {
+//         //     let msg = 'Error: ' + err.message;
+//         //     console.log(msg);
+//         //     output.error = msg;
+//         //
+//         //     return res.json(output);
+//         // }
+//
+//         let xml = dmnGenerator.generateXML(table, paramsMetadata, 'Модели');
+//
+//         output.result = true;
+//         output.xml = xml;
+//         res.setHeader('Access-Control-Allow-Origin', '*');
+//         res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
+//         res.json(output);
+//     });
+// });
 
 app.listen(3000, function() {
    console.log('Listen to: http://localhost:3000');

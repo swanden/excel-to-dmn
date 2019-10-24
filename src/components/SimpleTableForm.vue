@@ -1,78 +1,118 @@
 <template>
-    <div class="row form-wrapper">
-        <div class="col-md-12">
+    <div>
+        <div class="row form-wrapper">
+            <div class="col-md-12">
 
-            <form>
-                <div class="form-group">
-                    <label for="dmn-table-name">Название DMN таблицы</label>
-                    <input type="text" class="form-control" id="dmn-table-name" aria-describedby=""
-                           placeholder="Введите название" required>
-                </div>
-                <div class="form-group">
-                    <label for="excel-file">Выберите файл</label>
-                    <input type="file" class="form-control-file" id="excel-file" required>
-                </div>
-                <hr>
-
-                <div class="form-row">
-
-                    <div class="col">
-                        <h3>Входные параметры
-                            <button type="button" class="btn btn-secondary"
-                                    @click="addInputParam"
-                            >+
-                            </button>
-                        </h3>
-                        <param-data
-                                v-for="(item, index) in inputParams"
-                                :key="item.directionType + index"
-                                @changeParam="changeParam"
-                                @removeInputParam="removeInputParam"
-                                :index="index"
-                                :paramData="item"
-                                :columnNames="columnNames"
-                                :takenColumnNames="takenColumnNames"
-                        ></param-data>
+                <form>
+                    <div class="form-group">
+                        <label for="dmn-table-name">Название DMN таблицы</label>
+                        <input type="text" class="form-control" id="dmn-table-name" aria-describedby=""
+                               placeholder="Введите название" required
+                               v-model="dmnTableName"
+                               :class="isValidForm === false && dmnTableName.trim() == '' ? 'is-invalid' : ''"
+                        >
                     </div>
 
-                    <div class="col">
-                        <h3>Выходные параметры
-                            <button type="button" class="btn btn-secondary"
-                                    @click="addOutputParam"
-                            >+
-                            </button>
-                        </h3>
-                        <param-data
-                                v-for="(item, index) in outputParams"
-                                :key="item.directionType + index"
-                                @changeParam="changeParam"
-                                @removeOutputParam="removeOutputParam"
-                                :index="index"
-                                :paramData="item"
-                                :columnNames="columnNames"
-                                :takenColumnNames="takenColumnNames"
-                        ></param-data>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="excel-file" ref="excelFile" required
+                               @change="fileUpload"
+                               :class="isValidForm === false && !excelFile ? 'is-invalid' : ''"
+                        >
+                        <label class="custom-file-label" for="excel-file">{{ fileName }}</label>
+<!--                        <div class="invalid-feedback">Example invalid custom file feedback</div>-->
+                    </div>
+                    <hr>
+
+                    <div class="form-row">
+
+                        <div class="col">
+                            <h3>Входные параметры
+                                <button type="button" class="btn btn-secondary"
+                                        @click="addInputParam"
+                                >+
+                                </button>
+                            </h3>
+                            <param-data
+                                    v-for="(item, index) in inputParams"
+                                    :key="item.directionType + index"
+                                    @changeParam="changeParam"
+                                    @removeInputParam="removeInputParam"
+                                    :index="index"
+                                    :paramData="item"
+                                    :columnNames="columnNames"
+                                    :takenColumnNames="takenColumnNames"
+                                    :isValidForm="isValidForm"
+                            ></param-data>
+                        </div>
+
+                        <div class="col">
+                            <h3>Выходные параметры
+                                <button type="button" class="btn btn-secondary"
+                                        @click="addOutputParam"
+                                >+
+                                </button>
+                            </h3>
+                            <param-data
+                                    v-for="(item, index) in outputParams"
+                                    :key="item.directionType + index"
+                                    @changeParam="changeParam"
+                                    @removeOutputParam="removeOutputParam"
+                                    :index="index"
+                                    :paramData="item"
+                                    :columnNames="columnNames"
+                                    :takenColumnNames="takenColumnNames"
+                                    :isValidForm="isValidForm"
+                            ></param-data>
+                        </div>
+
                     </div>
 
+                    <div class="form-group mt-3">
+                        <button type="button" class="btn btn-secondary" @click="submitForm">Создать</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+<!--        <div class="row">-->
+<!--            <div class="col-md-12">-->
+<!--                <b-alert-->
+<!--                        variant="danger"-->
+<!--                        dismissible-->
+<!--                        fade-->
+<!--                        :show="showDismissibleAlert"-->
+<!--                >-->
+<!--                    Dismissible Alert!-->
+<!--                </b-alert>-->
+<!--                <button @click="alert">Alert</button>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <div class="row" v-if="xml !== ''">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="result-xml">DMN XML</label>
+                    <textarea class="form-control" id="result-xml" rows="10" v-model="xml"></textarea>
                 </div>
-
-                <div class="form-group mt-3">
-                    <button type="button" class="btn btn-secondary">Создать</button>
-                </div>
-
-            </form>
-
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+    import axios from 'axios';
     import ParamData from './ParamData';
 
     export default {
         name: 'SimpleTableForm',
         data() {
             return {
+                showDismissibleAlert: false,
+                dmnTableName: '',
+                excelFile: '',
+                xml: '',
                 inputParams: [
                     {
                         name: '',
@@ -117,13 +157,22 @@
                     'Y',
                     'Z'
                 ],
-                takenColumnNames: []
+                takenColumnNames: [],
+                isValidForm: true
             }
         },
         components: {
             ParamData
         },
+        computed: {
+            fileName() {
+                return this.excelFile ? this.excelFile.name : 'Выберите файл';
+            }
+        },
         methods: {
+            alert() {
+                this.showDismissibleAlert = true;
+            },
             addInputParam() {
                 this.inputParams.push({
                     name: '',
@@ -169,6 +218,58 @@
                         this.takenColumnNames.push(item.columnName);
                     }
                 });
+            },
+            fileUpload() {
+                this.excelFile = this.$refs.excelFile.files[0];
+            },
+            submitForm() {
+                if (!this.validateForm()) {
+                    return false;
+                }
+                let formData = new FormData();
+                formData.append('dmnTableName', this.dmnTableName);
+                formData.append('paramsMetadata', JSON.stringify(this.inputParams.concat(this.outputParams)));
+                formData.append('file', this.excelFile);
+
+                axios.post( 'http://localhost:3000/',
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }
+                ).then((resp) => {
+                    if (resp.data.result) {
+                        this.xml = resp.data.xml;
+                    }
+                })
+                .catch(() => {
+                    console.log('FAILURE!!');
+                });
+            },
+            validateForm() {
+                if (!this.dmnTableName) {
+                    return this.isValidForm = false;
+                }
+                if (!this.excelFile) {
+                    return this.isValidForm = false;
+                }
+
+                for(let i in this.inputParams) {
+                    let param = this.inputParams[i];
+                    if (param.columnName == 0 || !param.name) {
+                        return this.isValidForm = false;
+                    }
+                }
+
+                for(let i in this.outputParams) {
+                    let param = this.inputParams[i];
+                    if (param.columnName == 0 || !param.name) {
+                        return this.isValidForm = false;
+                    }
+                }
+
+                return this.isValidForm = true;
             }
         }
     }
