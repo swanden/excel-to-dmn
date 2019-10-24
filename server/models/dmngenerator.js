@@ -67,15 +67,16 @@ module.exports = () => {
             for(let varIndex in paramsMetadata) {
                 let variableMetadata = paramsMetadata[varIndex];
                 let col = row.filter((val) => val.name === variableMetadata.columnName)[0];
+                let value = col.value === null ? '' : col.value;
 
                 if (col.directionType === 'input') {
                     inputEntries += inputEntryTpl
                         .replace('##id##', shortid.generate())
-                        .replace('##value##', variableMetadata.type == 'string' ? `"${col.value}"` : col.value);
+                        .replace('##value##', variableMetadata.type == 'string' ? `"${value}"` : value);
                 } else if (col.directionType === 'output') {
                     outputEntries += outputEntryTpl
                         .replace('##id##', shortid.generate())
-                        .replace('##value##', variableMetadata.type == 'string' ? `"${col.value}"` : col.value);
+                        .replace('##value##', variableMetadata.type == 'string' ? `"${value}"` : value);
                 }
             }
 

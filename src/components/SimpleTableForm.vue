@@ -14,7 +14,7 @@
                     </div>
 
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="excel-file" ref="excelFile" required
+                        <input type="file" class="custom-file-input" id="excel-file" ref="excelFile" accept=".xlsx" required
                                @change="fileUpload"
                                :class="isValidForm === false && !excelFile ? 'is-invalid' : ''"
                         >
@@ -91,6 +91,7 @@
 <!--        </div>-->
 
         <div class="row" v-if="xml !== ''">
+            <h3>Результат</h3>
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="result-xml">DMN XML</label>
@@ -263,7 +264,7 @@
                 }
 
                 for(let i in this.outputParams) {
-                    let param = this.inputParams[i];
+                    let param = this.outputParams[i];
                     if (param.columnName == 0 || !param.name) {
                         return this.isValidForm = false;
                     }
