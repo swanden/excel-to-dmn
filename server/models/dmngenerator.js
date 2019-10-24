@@ -30,6 +30,18 @@ module.exports = () => {
     const outputEntryTpl = `<outputEntry id="LiteralExpression_##id##"><text>##value##</text></outputEntry>\n`;
 
     dmnGenerator.generateXML = (table, paramsMetadata, tableName) => {
+        let [inputVarsDefinition, outputVarsDefinition] = varsDefinitionReplace(paramsMetadata);
+
+        if (table.length < 1) {
+            mainTplReplace(tableName, inputVarsDefinition, outputVarsDefinition, '')
+        }
+
+        let rules = rulesReplace(table, paramsMetadata);
+
+        return mainTplReplace(tableName, inputVarsDefinition, outputVarsDefinition, rules);
+    };
+
+    const varsDefinitionReplace = (paramsMetadata) => {
         let inputVarsDefinition = '';
         let outputVarsDefinition = '';
 
@@ -50,15 +62,12 @@ module.exports = () => {
             }
         }
 
-        if (table.length < 1) {
-            return mainTpl
-                .replace('##tableName##', tableName)
-                .replace('##inputVarsDefinition##', inputVarsDefinition)
-                .replace('##outputVarsDefenition##', outputVarsDefinition)
-                .replace('##rules##', '');
-        }
+        return [inputVarsDefinition, outputVarsDefinition];
+    };
 
+    const rulesReplace = (table, paramsMetadata) => {
         let rules = '';
+
         for (let rowIndex in table) {
             let row = table[rowIndex];
             let inputEntries = '';
@@ -86,6 +95,10 @@ module.exports = () => {
                 .replace('##outputEntries##', outputEntries)
         }
 
+        return rules;
+    };
+
+    const mainTplReplace = (tableName, inputVarsDefinition, outputVarsDefinition, rules) => {
         return mainTpl
             .replace('##tableName##', tableName)
             .replace('##inputVarsDefinition##', inputVarsDefinition)

@@ -78,9 +78,6 @@
                 }
             },
             changeParam() {
-                // console.log((!this.isValidForm && this.paramData.columnName == 0))
-                // console.log('isValid', this.isValidForm)
-                // console.log('columnName', this.paramData.columnName)
                 this.$emit('changeParam', {
                     paramData: this.paramData,
                     index: this.index

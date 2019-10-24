@@ -30,7 +30,7 @@ module.exports = () => {
         });
     };
 
-    function uploadFile(oldPath, newPath, fields, res) {
+    const uploadFile = (oldPath, newPath, fields, res) => {
         fs.rename(oldPath, newPath, (err) => {
             if (err) {
                 output.error = err.message;
@@ -64,7 +64,7 @@ module.exports = () => {
         });
     };
 
-    function parseTable(newPath, paramsMetadata, tableName, res) {
+    const parseTable = (newPath, paramsMetadata, tableName, res) => {
         excelParser.parseSimpleTable(newPath, paramsMetadata, (err, table) => {
             fs.unlinkSync(newPath);
 
@@ -80,6 +80,7 @@ module.exports = () => {
 
             output.result = true;
             output.xml = xml;
+
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
             res.json(output);
