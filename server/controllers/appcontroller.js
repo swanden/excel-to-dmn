@@ -74,8 +74,6 @@ module.exports = (excelParser, dmnGenerator, formidable, fs) => {
             output.result = true;
             output.xml = xml;
 
-            res.setHeader('Access-Control-Allow-Origin', '*');
-            res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
             res.json(output);
         });
     };

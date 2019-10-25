@@ -75,41 +75,22 @@
             </div>
         </div>
 
-<!--        <div class="row">-->
-<!--            <div class="col-md-12">-->
-<!--                <b-alert-->
-<!--                        variant="danger"-->
-<!--                        dismissible-->
-<!--                        fade-->
-<!--                        :show="showDismissibleAlert"-->
-<!--                >-->
-<!--                    Dismissible Alert!-->
-<!--                </b-alert>-->
-<!--                <button @click="alert">Alert</button>-->
-<!--            </div>-->
-<!--        </div>-->
-
-        <div class="row" v-if="xml !== ''">
-            <h3>Результат</h3>
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="result-xml">DMN Table XML</label>
-                    <textarea class="form-control" id="result-xml" rows="10" v-model="xml"></textarea>
-                </div>
-            </div>
-        </div>
+        <result
+                v-if="xml !== ''"
+                :xml="xml"
+        ></result>
     </div>
 </template>
 
 <script>
     import axios from 'axios';
     import ParamData from './ParamData';
+    import Result from './Result';
 
     export default {
         name: 'SimpleTableForm',
         data() {
             return {
-                showDismissibleAlert: false,
                 dmnTableName: '',
                 excelFile: '',
                 xml: '',
@@ -162,7 +143,8 @@
             }
         },
         components: {
-            ParamData
+            ParamData,
+            Result
         },
         computed: {
             fileName() {
@@ -241,10 +223,12 @@
                 ).then((resp) => {
                     if (resp.data.result) {
                         this.xml = resp.data.xml;
+                    } else {
+                        this.makeToast('Ошибка', resp.data.error, 'danger');
                     }
                 })
                 .catch(() => {
-                    console.log('FAILURE!!');
+                    this.makeToast('Ошибка', 'Ошибка запроса', 'danger');
                 });
             },
             validateForm() {
@@ -270,6 +254,14 @@
                 }
 
                 return this.isValidForm = true;
+            },
+            makeToast(title, msg, variant = null) {
+                this.$bvToast.toast(msg, {
+                    title: title,
+                    toaster: 'b-toaster-top-center',
+                    variant: variant,
+                    solid: true
+                })
             }
         }
     }

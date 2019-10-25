@@ -47,13 +47,13 @@
 <script>
     export default {
         name: "ParamData",
-        props: [
-            'index',
-            'paramData',
-            "columnNames",
-            "takenColumnNames",
-            "isValidForm"
-        ],
+        props: {
+            index: Number,
+            paramData: Object,
+            columnNames: Array,
+            takenColumnNames: Array,
+            isValidForm: Boolean
+        },
         data() {
            return {
            }
