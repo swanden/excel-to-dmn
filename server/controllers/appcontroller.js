@@ -1,13 +1,6 @@
-const formidable = require('formidable');
-const fs = require('fs');
+"use strict";
 
-const excelParserFactory = require('./../models/excelparser');
-const DMNGeneratorFactory = require('./../models/dmngenerator');
-
-const excelParser = excelParserFactory();
-const dmnGenerator = DMNGeneratorFactory();
-
-module.exports = () => {
+module.exports = (excelParser, dmnGenerator, formidable, fs) => {
     const appController = {};
 
     let output = {

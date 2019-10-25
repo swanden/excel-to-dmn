@@ -1,8 +1,6 @@
 "use strict";
 
-const shortid = require('shortid');
-
-module.exports = () => {
+module.exports = (shortid) => {
     const dmnGenerator = {};
 
     const mainTpl = `<?xml version="1.0" encoding="UTF-8"?>
@@ -33,7 +31,7 @@ module.exports = () => {
         let [inputVarsDefinition, outputVarsDefinition] = varsDefinitionReplace(paramsMetadata);
 
         if (table.length < 1) {
-            mainTplReplace(tableName, inputVarsDefinition, outputVarsDefinition, '')
+            return mainTplReplace(tableName, inputVarsDefinition, outputVarsDefinition, '');
         }
 
         let rules = rulesReplace(table, paramsMetadata);

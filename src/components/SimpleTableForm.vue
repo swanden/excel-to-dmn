@@ -19,7 +19,6 @@
                                :class="isValidForm === false && !excelFile ? 'is-invalid' : ''"
                         >
                         <label class="custom-file-label" for="excel-file">{{ fileName }}</label>
-<!--                        <div class="invalid-feedback">Example invalid custom file feedback</div>-->
                     </div>
                     <hr>
 

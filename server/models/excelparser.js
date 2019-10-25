@@ -1,8 +1,6 @@
 "use strict";
 
-const exceljs = require('exceljs');
-
-module.exports = () => {
+module.exports = (exceljs) => {
     const excelParser = {};
 
     excelParser.parseSimpleTable = (fileName, paramsMetadata, callback) => {
