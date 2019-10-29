@@ -87,6 +87,8 @@
     import ParamData from './ParamData';
     import Result from './Result';
 
+    axios.defaults.withCredentials = true;
+
     export default {
         name: 'SimpleTableForm',
         data() {
@@ -213,7 +215,7 @@
                 formData.append('paramsMetadata', JSON.stringify(this.inputParams.concat(this.outputParams)));
                 formData.append('file', this.excelFile);
 
-                axios.post( 'http://localhost:3000/',
+                axios.post( 'http://localhost:3000/get_simple_table_xml',
                     formData,
                     {
                         headers: {
