@@ -32,7 +32,8 @@ app.use(function (req, res, next) {
     if (!req.session.simpleTableXml) {
         req.session.simpleTableXml = '';
     }
-    next()
+
+    next();
 });
 
 let output = {
@@ -47,7 +48,6 @@ app.post('/get_simple_table_xml', function(req, res) {
         }
 
         req.session.simpleTableXml = xml;
-        console.log(req.session.simpleTableXml);
 
         output.result = true;
         output.xml = xml;
