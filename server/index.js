@@ -33,6 +33,10 @@ app.use(function (req, res, next) {
         req.session.simpleTableXml = '';
     }
 
+    if (!req.session.IncidenceTableXml) {
+        req.session.IncidenceTableXml = '';
+    }
+
     next();
 });
 
@@ -41,7 +45,7 @@ let output = {
 };
 
 app.post('/get_simple_table_xml', function(req, res) {
-    appController.getDmnXml(req, res, (err, xml) => {
+    appController.getDmnXml(req, res, 'simple', (err, xml) => {
         if (err) {
             output.error = err.message;
             return res.json(output);
@@ -58,8 +62,30 @@ app.post('/get_simple_table_xml', function(req, res) {
 
 app.get('/get_simple_table_file', function(req, res) {
     res.type('application/xml');
-    res.set('Content-Disposition', 'attachment; filename="table.dmn"');
+    res.set('Content-Disposition', 'attachment; filename="simpleTable.dmn"');
     res.send(req.session.simpleTableXml);
+});
+
+app.post('/get_incidence_table_xml', function(req, res) {
+    appController.getDmnXml(req, res, 'incidence', (err, xml) => {
+        if (err) {
+            output.error = err.message;
+            return res.json(output);
+        }
+
+        req.session.IncidenceTableXml = xml;
+
+        output.result = true;
+        output.xml = xml;
+
+        res.json(output);
+    });
+});
+
+app.get('/get_incidence_table_file', function(req, res) {
+    res.type('application/xml');
+    res.set('Content-Disposition', 'attachment; filename="incidenceTable.dmn"');
+    res.send(req.session.IncidenceTableXml);
 });
 
 app.listen(3000, function() {

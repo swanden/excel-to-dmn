@@ -78,6 +78,7 @@
         <result
                 v-if="xml !== ''"
                 :xml="xml"
+                :endpoint="'http://localhost:3000/get_simple_table_file'"
         ></result>
     </div>
 </template>

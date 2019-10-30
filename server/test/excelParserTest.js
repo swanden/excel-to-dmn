@@ -51,7 +51,7 @@ describe('excelParser', () => {
             [
                 {name: 'A', value: 'AC', directionType: 'input'},
                 {name: 'B', value: 'COBRA', directionType: 'input'},
-                {name: 'D', value: '1.23', directionType: 'output'}
+                {name: 'D', value: '1.2', directionType: 'output'}
             ]
         ];
 
@@ -62,6 +62,69 @@ describe('excelParser', () => {
             }
             // table.should.eql(resultTable);
             expect(table).to.deep.equal(resultTable);
+            done();
+        });
+    });
+
+    it('parseIncidenceTable', (done) => {
+        let testFilePath = `${__dirname}/../examples/small-incidence-table.xlsx`;
+        let paramsMetadata = [
+            {
+                name: 'first',
+                columnName: 'A',
+                type: 'string',
+                directionType: 'input'
+            },
+            {
+                name: 'second',
+                columnName: 'B',
+                type: 'string',
+                directionType: 'input'
+            },
+            {
+                name: 'third',
+                columnName: 'C',
+                type: 'double',
+                directionType: 'output'
+            }
+        ];
+        let resultTable = [ [ { name: 'A', value: '18', directionType: 'input' },
+            { name: 'B', value: '0', directionType: 'input' },
+            { name: 'C', value: '1,55', directionType: 'output' } ],
+            [ { name: 'A', value: '19', directionType: 'input' },
+                { name: 'B', value: '0', directionType: 'input' },
+                { name: 'C', value: '1,55', directionType: 'output' } ],
+            [ { name: 'A', value: '19', directionType: 'input' },
+                { name: 'B', value: '1', directionType: 'input' },
+                { name: 'C', value: '1,50', directionType: 'output' } ],
+            [ { name: 'A', value: '20', directionType: 'input' },
+                { name: 'B', value: '0', directionType: 'input' },
+                { name: 'C', value: '1,50', directionType: 'output' } ],
+            [ { name: 'A', value: '20', directionType: 'input' },
+                { name: 'B', value: '1', directionType: 'input' },
+                { name: 'C', value: '1,50', directionType: 'output' } ],
+            [ { name: 'A', value: '20', directionType: 'input' },
+                { name: 'B', value: '2', directionType: 'input' },
+                { name: 'C', value: '1,45', directionType: 'output' } ],
+            [ { name: 'A', value: '21', directionType: 'input' },
+                { name: 'B', value: '0', directionType: 'input' },
+                { name: 'C', value: '1,45', directionType: 'output' } ],
+            [ { name: 'A', value: '21', directionType: 'input' },
+                { name: 'B', value: '1', directionType: 'input' },
+                { name: 'C', value: '1,45', directionType: 'output' } ],
+            [ { name: 'A', value: '21', directionType: 'input' },
+                { name: 'B', value: '2', directionType: 'input' },
+                { name: 'C', value: '1,35', directionType: 'output' } ] ];
+
+        excelParser.parseIncidenceTable(testFilePath, paramsMetadata, (err, table) => {
+            if (err) {
+                done();
+                throw err;
+            }
+
+            expect(table).to.deep.equal(resultTable);
+
+            // console.log(table)
             done();
         });
     });
