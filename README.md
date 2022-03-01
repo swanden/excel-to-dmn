@@ -1,4 +1,6 @@
-# client
+# Excel-to-dmn
+
+Excel-to-dmn is a web interface tool to convert exel files to DMN tables to use in Camunda projects.
 
 ## Project setup
 ```
