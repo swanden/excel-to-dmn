@@ -16,7 +16,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "formidable": "^1.2.1",
-    "mocha": "^6.2.2",
+    "mocha": "^6.2.3",
     "parse-fn-args": "^1.0.1",
     "shortid": "^2.2.15",
     "sinon": "^7.5.0"
